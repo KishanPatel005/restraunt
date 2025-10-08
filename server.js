@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const convertUrlsToAbsolute = require('./middleware/urlConverter');
 require('dotenv').config();
 
 const app = express();
@@ -14,6 +15,9 @@ app.use(cors({
   credentials: false // Set to true if you need to send cookies
 }));
 app.use(express.json());
+
+// URL conversion middleware - converts relative URLs to absolute URLs
+app.use(convertUrlsToAbsolute);
 app.use(express.static('uploads'));
 
 // Serve uploaded files
