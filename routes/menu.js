@@ -150,10 +150,19 @@ router.get('/qr/:restaurantName/:tableId', async (req, res) => {
   try {
     const { restaurantName, tableId } = req.params;
     
-    // Find restaurant by name
-    const restaurant = await Restaurant.findOne({ 
+    // Find restaurant by name - handle both original name and sanitized name
+    let restaurant = await Restaurant.findOne({ 
       name: { $regex: new RegExp(restaurantName, 'i') } 
     });
+    
+    // If not found with original name, try to find by sanitized name
+    if (!restaurant) {
+      const allRestaurants = await Restaurant.find({});
+      restaurant = allRestaurants.find(r => {
+        const sanitizedName = r.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        return sanitizedName === restaurantName.toLowerCase();
+      });
+    }
     
     if (!restaurant) {
       return res.status(404).json({ message: 'Restaurant not found' });
@@ -215,12 +224,17 @@ router.post('/', upload.single('menuPdf'), async (req, res) => {
     const formData = new FormData();
     formData.append('file', fs.createReadStream(req.file.path));
     
-    console.log('Sending PDF to processing API:', process.env.PDF_PROCESS_URL);
+    // Ensure we're using the correct endpoint for PDF processing
+    const pdfProcessUrl = process.env.PDF_PROCESS_URL.endsWith('/') 
+      ? `${process.env.PDF_PROCESS_URL}parse-menu` 
+      : `${process.env.PDF_PROCESS_URL}/parse-menu`;
+    
+    console.log('Sending PDF to processing API:', pdfProcessUrl);
     console.log('PDF file path:', req.file.path);
     
     let processedResponse;
     try {
-      const response = await axios.post(process.env.PDF_PROCESS_URL, formData, {
+      const response = await axios.post(pdfProcessUrl, formData, {
         headers: {
           ...formData.getHeaders(),
         },
@@ -338,12 +352,17 @@ router.put('/:id', upload.single('menuPdf'), async (req, res) => {
     const formData = new FormData();
     formData.append('file', fs.createReadStream(req.file.path));
     
-    console.log('Sending PDF to processing API:', process.env.PDF_PROCESS_URL);
+    // Ensure we're using the correct endpoint for PDF processing
+    const pdfProcessUrl = process.env.PDF_PROCESS_URL.endsWith('/') 
+      ? `${process.env.PDF_PROCESS_URL}parse-menu` 
+      : `${process.env.PDF_PROCESS_URL}/parse-menu`;
+    
+    console.log('Sending PDF to processing API:', pdfProcessUrl);
     console.log('PDF file path:', req.file.path);
     
     let processedResponse;
     try {
-      const response = await axios.post(process.env.PDF_PROCESS_URL, formData, {
+      const response = await axios.post(pdfProcessUrl, formData, {
         headers: {
           ...formData.getHeaders(),
         },
