@@ -99,7 +99,7 @@ router.post('/restaurant-admin-login', async (req, res) => {
       user: {
         email: restaurantAdmin.email,
         role: 'restaurant_admin',
-        restaurantId: restaurantAdmin.restaurantId,
+        restaurantId: String(restaurantAdmin.restaurantId),
         restaurantName: restaurant.name
       }
     });
