@@ -434,7 +434,7 @@ const TableManagement = ({ restaurant }) => {
           {selectedQrData && (
             <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
               <img 
-                src={`http://localhost:5000${selectedQrData.qrCode}`}
+                src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${selectedQrData.qrCode}`}
                 alt="QR Code"
                 style={{ 
                   maxWidth: '100%', 

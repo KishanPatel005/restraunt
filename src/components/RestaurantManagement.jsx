@@ -190,7 +190,8 @@ const RestaurantManagement = () => {
       headerName: 'Logo', 
       width: 100,
       renderCell: (params) => {
-        const logoUrl = params.value ? `http://localhost:5000${params.value}` : null;
+        const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+        const logoUrl = params.value ? `${baseUrl}${params.value}` : null;
         console.log('Logo URL:', logoUrl); // Debug log
         
         return logoUrl ? (

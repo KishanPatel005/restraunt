@@ -66,7 +66,7 @@ const QRCodePage = () => {
   const fetchRestaurantData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/menu/qr/${restaurantName}/${tableId}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/menu/qr/${restaurantName}/${tableId}`);
       
       if (response.ok) {
         const data = await response.json();
@@ -197,7 +197,9 @@ const QRCodePage = () => {
   const handleDownloadMenu = async () => {
     if (restaurantData?.menu?.pdfFile) {
       try {
-        const pdfUrl = `http://localhost:5000${restaurantData.menu.pdfFile}`;
+        // Use environment variable for API base URL
+        const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+        const pdfUrl = `${baseUrl}${restaurantData.menu.pdfFile}`;
         
         // Fetch the PDF file
         const response = await fetch(pdfUrl);
@@ -222,7 +224,8 @@ const QRCodePage = () => {
       } catch (error) {
         console.error('Download failed:', error);
         // Fallback to direct link if fetch fails
-        const pdfUrl = `http://localhost:5000${restaurantData.menu.pdfFile}`;
+        const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+        const pdfUrl = `${baseUrl}${restaurantData.menu.pdfFile}`;
         window.open(pdfUrl, '_blank');
       }
     }
@@ -631,7 +634,7 @@ const QRCodePage = () => {
                 )}
 
                 <Document
-                  file={`http://localhost:5000${restaurantData.menu.pdfFile}`}
+                  file={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${restaurantData.menu.pdfFile}`}
                   onLoadSuccess={onDocumentLoadSuccess}
                   onLoadError={onDocumentLoadError}
                   onLoadStart={() => setPdfLoading(true)}

@@ -68,7 +68,8 @@ const MenuManagement = ({ restaurant }) => {
 
   const handleViewMenu = () => {
     if (menu?.pdfFile) {
-      window.open(`http://localhost:5000${menu.pdfFile}`, '_blank');
+      const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+      window.open(`${baseUrl}${menu.pdfFile}`, '_blank');
     }
   };
 

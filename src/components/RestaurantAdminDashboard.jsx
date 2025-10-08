@@ -150,7 +150,7 @@ const RestaurantAdminDashboard = () => {
         <Box display="flex" alignItems="center" sx={{ width: '100%' }}>
           {restaurant?.logo ? (
             <img 
-              src={`http://localhost:5000${restaurant.logo}`}
+              src={`${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${restaurant.logo}`}
               alt="Restaurant Logo"
               style={{
                 width: 40,
